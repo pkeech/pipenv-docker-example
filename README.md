@@ -7,10 +7,14 @@
 Before you begin, you will need to generate a `Pipfile` and a `Pipfile.lock`.
 
 1. Create a temporary container (or environment).
-   `docker run -it --rm -v $(pwd)/:/app --workdir /app --entrypoint /bin/bash python:3.11.0-slim-buster`
+   ```bash
+   docker run -it --rm -v $(pwd)/:/app --workdir /app --entrypoint /bin/bash python:3.11.0-slim-buster
+   ```
 
 2. Install the required dependencies. This will generate the files.
-   `pipenv install flask`
+   ```
+   pipenv install flask
+   ```
 
 3. Exit the temporary container.
    
