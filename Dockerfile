@@ -1,5 +1,12 @@
+## ========================
+##        BASE IMAGE
+## ========================
+
 ## DEFINE BASE IMAGE
-FROM python:3.11.0-slim-buster
+FROM python:3.11.0-slim-buster as base
+
+## DEFINE METADATA
+LABEL maintainer="Peter Keech <peter@keech.co>"
 
 ## DEFINE & PREPARE ENVIRONMENT
 ENV LANG C.UTF-8
@@ -19,17 +26,35 @@ COPY Pipfile Pipfile.lock ${PROJECT_DIR}/
 RUN pipenv install --system --deploy && \
     rm Pipfile Pipfile.lock
 
+## INCLUDE APPLICATION
+COPY src ${PROJECT_DIR}/
+
+## ========================
+##    DEVELOPMENT IMAGE
+## ========================
+
+## DEFINE DEVELOPMENT IMAGE
+FROM base as development
+
 ## DEFINE FLASK ENVIRONMENT
 ENV FLASK_APP=example
 ENV FLASK_DEBUG=1
 ENV FLASK_RUN_PORT=8080
 ENV FLASK_RUN_HOST=0.0.0.0
 
-## INCLUDE APPLICATION
-COPY example ${PROJECT_DIR}/example
-
 ## DEFINE EXPOSED PORT
-EXPOSE 8080
+EXPOSE ${FLASK_RUN_PORT}
 
-## START FLASK APPLICATION (DEV ONLY)
+## START FLASK APPLICATION
 CMD [ "flask", "run" ]
+
+
+## ========================
+##    PRODUCTION IMAGE
+## ========================
+
+## DEFINE PRODUCTION IMAGE
+FROM base as production
+
+## RUN GUNICORN SERVER
+CMD [ "gunicorn"  , "-b", "0.0.0.0:8080",  "example:app" ]

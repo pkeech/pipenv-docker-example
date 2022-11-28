@@ -6,6 +6,7 @@ verify_ssl = true
 [packages]
 flask = "*"
 python-dotenv = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.11"
